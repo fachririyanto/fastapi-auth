@@ -43,7 +43,6 @@ class Role(Base):
     created_by = Column(BigInteger, ForeignKey("users.user_id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    is_deleted = Column(Boolean, default=False)
 
 
 class RoleCapabilities(Base):

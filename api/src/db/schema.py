@@ -22,8 +22,7 @@ QUERY_CREATE_TABLES = """
         role_name VARCHAR(30) NOT NULL,
         created_by BIGINT NOT NULL DEFAULT 1,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        is_deleted BOOLEAN DEFAULT FALSE
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
 
     CREATE TABLE IF NOT EXISTS role_capabilities (
@@ -77,4 +76,7 @@ QUERY_INSERT_DATA = """
         (2, 'create_user'),
         (2, 'update_user'),
         (2, 'delete_user');
+
+    ALTER SEQUENCE users_user_id_seq RESTART WITH 4;
+    ALTER SEQUENCE roles_role_id_seq RESTART WITH 4;
 """
