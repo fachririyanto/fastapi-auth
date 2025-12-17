@@ -11,6 +11,14 @@ from .models import (
     DeleteUserRequest,
 )
 
+from .handlers import (
+    get_users_handler,
+    get_user_handler,
+    create_user_handler,
+    change_user_status_handler,
+    delete_user_handler,
+)
+
 
 user_router = APIRouter(
     prefix="/user",
@@ -26,7 +34,14 @@ def route_get_users(
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return {}
+    return get_users_handler(
+        request=request,
+        payload=payload,
+        session=session,
+        search=search,
+        page=page,
+        limit=limit,
+    )
 
 @user_router.get("/detail/{user_id}")
 def route_get_user(
@@ -35,7 +50,12 @@ def route_get_user(
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return {}
+    return get_user_handler(
+        request=request,
+        user_id=user_id,
+        payload=payload,
+        session=session,
+    )
 
 @user_router.post("/create")
 def route_create_user(
@@ -44,7 +64,12 @@ def route_create_user(
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return {}
+    return create_user_handler(
+        request=request,
+        params=params,
+        payload=payload,
+        session=session,
+    )
 
 @user_router.patch("/change-status")
 def route_change_user_status(
@@ -53,7 +78,12 @@ def route_change_user_status(
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return {}
+    return change_user_status_handler(
+        request=request,
+        params=params,
+        payload=payload,
+        session=session,
+    )
 
 @user_router.delete("/delete")
 def route_delete_user(
@@ -62,4 +92,9 @@ def route_delete_user(
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return {}
+    return delete_user_handler(
+        request=request,
+        params=params,
+        payload=payload,
+        session=session,
+    )

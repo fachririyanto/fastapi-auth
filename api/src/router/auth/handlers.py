@@ -20,6 +20,7 @@ from .models import (
     RefreshTokenRequest,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    ConfirmAccountRequest,
     LogoutRequest,
 )
 
@@ -230,7 +231,7 @@ def forgot_password_handler(request: Request, params: ForgotPasswordRequest, ses
                 sender=app_config.MAIL_SENDER,
                 to=params.email,
                 subject="Reset my password",
-                message=f"Click link below to reset your password. Your reset code: {reset_code}.\n<a href='{app_config.FRONTEND_APP_URL}/reset-password'>Reset password</a>",
+                message=f"Click link below to reset your password. Your reset code: {reset_code}.\n<a href='{app_config.FRONTEND_APP_URL}/reset-password?email={params.email}'>Reset password</a>",
             )
 
             mail.send()
@@ -314,7 +315,6 @@ def reset_password_handler(request: Request, params: ResetPasswordRequest, sessi
         # Update user data
         user.password = hashed_new_password
         user.reset_code = ""
-        user.is_verified = True
 
         # Commit transactions
         session.commit()
@@ -346,6 +346,82 @@ def reset_password_handler(request: Request, params: ResetPasswordRequest, sessi
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during reset password" if app_config.ENV == "production" else str(e),
+        )
+
+
+def confirm_account_handler(request: Request, params: ConfirmAccountRequest, session: Session):
+    try:
+        # Validate request params
+        if not params.email:
+            raise ValueError("Email is required")
+        elif not is_valid_email(params.email):
+            raise ValueError("Invalid email format")
+
+        if not params.code:
+            raise ValueError("Code is required")
+
+        if not params.new_password:
+            raise ValueError("New password is required")
+
+        if not params.confirm_password:
+            raise ValueError("Confirm password is required")
+        elif params.confirm_password != params.new_password:
+            raise ValueError("Invalid confirm password")
+
+        # Check if email is exists
+        user = session.query(
+            User,
+        ).filter(
+            User.email == params.email,
+            User.is_deleted == False,
+        ).first()
+
+        if not user:
+            raise DataNotFoundError("Email not found")
+
+        # Verify confirm code
+        if user.verify_code == "" or user.verify_code != params.code:
+            raise ValueError("Invalid code")
+
+        # Encrypt new password
+        hashed_new_password = encrypt_password(password=params.new_password)
+
+        # Update user data
+        user.password = hashed_new_password
+        user.verify_code = ""
+        user.verified_at = func.now()
+        user.is_verified = True
+
+        # Commit transactions
+        session.commit()
+
+        return {
+            "data": {
+                "email": params.email,
+                "status": "account_confirmed",
+            },
+        }
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except DataNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except Exception as e:
+        session.rollback()
+
+        log_error.add_error(
+            message="An error occurred during confirm account",
+            exc_info=e,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during confirm account" if app_config.ENV == "production" else str(e),
         )
 
 

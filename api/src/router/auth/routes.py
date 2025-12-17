@@ -10,6 +10,7 @@ from .models import (
     RefreshTokenRequest,
     ForgotPasswordRequest,
     ResetPasswordRequest,
+    ConfirmAccountRequest,
     LogoutRequest,
 )
 
@@ -18,6 +19,7 @@ from .handlers import (
     refresh_token_handler,
     forgot_password_handler,
     reset_password_handler,
+    confirm_account_handler,
     logout_handler,
     logout_all_handler,
 )
@@ -59,6 +61,14 @@ def route_reset_password(
         session: Session = Depends(db_session),
     ):
     return reset_password_handler(request=request, params=params, session=session)
+
+@auth_router.post("/confirm-account")
+def route_confirm_account(
+        request: Request,
+        params: ConfirmAccountRequest,
+        session: Session = Depends(db_session),
+    ):
+    return confirm_account_handler(request=request, params=params, session=session)
 
 @auth_router.post("/logout")
 def route_logout(

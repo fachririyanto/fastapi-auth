@@ -21,5 +21,12 @@ class ResetPasswordRequest(BaseModel):
     confirm_password: str = ""
 
 
+class ConfirmAccountRequest(BaseModel):
+    email: str = ""
+    code: str = ""
+    new_password: str = ""
+    confirm_password: str = ""
+
+
 class LogoutRequest(BaseModel):
     refresh_token: str = ""
