@@ -90,9 +90,6 @@ def login_handler(request: Request, params: LoginRequest, session: Session):
         session.commit()
 
         return {
-            "data": {
-                "user_id": str(user.user_id),
-            },
             "tokens": tokens,
         }
     except ValueError as e:
