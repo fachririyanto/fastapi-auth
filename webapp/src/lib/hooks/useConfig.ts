@@ -3,6 +3,7 @@ export const useConfig = () => {
         // app config
         AppName: import.meta.env.VITE_APP_NAME,
         AppUrl: import.meta.env.VITE_APP_URL,
+        AppVersion: import.meta.env.VITE_APP_VERSION,
 
         // api config
         APIUrl: import.meta.env.VITE_API_URL,

@@ -5,6 +5,8 @@ import {
     redirect,
 } from "@tanstack/react-router";
 
+import { AppLayout } from "@/components/layout/app";
+
 interface RootRouteContext {
     auth: {
         token: string | null;
@@ -26,6 +28,6 @@ export const rootRoute = createRootRouteWithContext<RootRouteContext>()({
 
 export const appRoute = createRoute({
     path: "/app",
-    component: Outlet,
+    component: () => (<AppLayout><Outlet /></AppLayout>),
     getParentRoute: () => rootRoute,
 });

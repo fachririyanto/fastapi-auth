@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useConfig } from "@/lib/hooks/useConfig";
 import { useApi } from "@/lib/hooks/useApi";
 import { useAccount } from "@/lib/hooks/useAccount";
-import { getToken, createSession, destroySession } from "@/lib/utils/auth";
+import { getToken, getRefreshToken, createSession, destroySession } from "@/lib/utils/auth";
 import type { Profile } from "@/lib/types/account";
 import { AuthContext, useAuth, type AuthContextType } from "./context";
 import type { LoginResponse } from "./types";
@@ -55,7 +55,9 @@ export function Authenticator({ children }: AuthenticatorProps) {
     // handle user signout
     const signOut = async () => {
         try {
-            const response = await api.POST(`${APIUrl}/auth/logout`, {});
+            const response = await api.POST(`${APIUrl}/auth/logout`, {
+                refresh_token: getRefreshToken(),
+            });
 
             if (response.status !== 200) {
                 throw new Error(response.statusText);
