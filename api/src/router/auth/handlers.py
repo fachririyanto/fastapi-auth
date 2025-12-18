@@ -162,9 +162,6 @@ def refresh_token_handler(request: Request, params: RefreshTokenRequest, session
         session.commit()
 
         return {
-            "data": {
-                "user_id": str(refresh_token.user_id),
-            },
             "tokens": tokens,
         }
     except ValueError as e:
