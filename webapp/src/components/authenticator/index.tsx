@@ -120,6 +120,7 @@ export function Authenticator({ children }: AuthenticatorProps) {
         token,
         isAuthLoading,
         isProfileLoading: myProfile.isLoading,
+        updateUser: (val: Profile) => setUser(val),
         signIn,
         signOut,
         signOutAll,

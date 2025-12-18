@@ -9,6 +9,7 @@ export interface AuthContextType {
     isProfileLoading: boolean;
 
     // methods
+    updateUser: (user: Profile) => void;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
     signOutAll: () => Promise<void>;

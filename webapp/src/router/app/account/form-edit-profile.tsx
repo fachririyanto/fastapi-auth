@@ -11,8 +11,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 
 export function FormEditProfile() {
-    const { user, isProfileLoading } = useAuth();
-    const { updateProfile, refetchProfile } = useAccount();
+    const { user, updateUser, isProfileLoading } = useAuth();
+    const { updateProfile } = useAccount();
 
     const [fullName, setFullName] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -29,7 +29,7 @@ export function FormEditProfile() {
     const saveProfile = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (isLoading) {
+        if (isLoading || !user) {
             return;
         }
 
@@ -52,14 +52,14 @@ export function FormEditProfile() {
             setSuccess("Profile updated");
 
             // refetch profile
-            refetchProfile();
+            updateUser({ ...user, full_name: fullName });
         } catch (error) {
             console.error("Update profile error:", error);
             setError(getErrorMessage(error) || "An unexpected error occurred during update profile");
         } finally {
             setIsLoading(false);
         }
-    }, [fullName, isLoading, updateProfile, refetchProfile]);
+    }, [fullName, isLoading, updateProfile, updateUser]);
 
     return (
         <form onSubmit={saveProfile}>
