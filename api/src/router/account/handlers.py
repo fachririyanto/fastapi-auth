@@ -39,7 +39,7 @@ def get_profile_me_handler(request: Request, payload: AuthPayload, session: Sess
             raise DataNotFoundError("Profile is not found")
 
         return {
-            "data": profile,
+            "profile": profile,
         }
     except DataNotFoundError as e:
         raise HTTPException(
@@ -73,7 +73,7 @@ def get_my_role_capabilities_handler(request: Request, payload: AuthPayload, ses
         ).all()
 
         return {
-            "data": capabilities,
+            "capabilities": capabilities,
         }
     except Exception as e:
         log_error.add_error(
