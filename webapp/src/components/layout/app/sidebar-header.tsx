@@ -16,7 +16,7 @@ export function AppSidebarHeader() {
                         <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                             <GalleryVerticalEnd className="size-4" />
                         </div>
-                        <div className="grid gap-1.5">
+                        <div className="grid gap-1">
                             <span className="font-medium leading-none">{AppName}</span>
                             <span className="text-xs text-muted-foreground leading-none">v{AppVersion}</span>
                         </div>

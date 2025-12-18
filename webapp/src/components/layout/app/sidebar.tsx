@@ -13,13 +13,13 @@ import { AppSidebarProfile } from "./sidebar-profile";
 export function AppSidebar() {
     return (
         <Sidebar>
-            <SidebarHeader>
+            <SidebarHeader className="h-16 border-b">
                 <AppSidebarHeader />
             </SidebarHeader>
             <SidebarContent>
                 <AppSidebarNav />
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t">
                 <AppSidebarProfile />
             </SidebarFooter>
             <SidebarRail />

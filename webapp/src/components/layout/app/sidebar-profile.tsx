@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Link } from "@tanstack/react-router";
 import { BadgeCheck, ChevronsUpDown, LogOut, LoaderCircle } from "lucide-react";
 
 import { useAuth } from "@/components/authenticator";
@@ -41,7 +42,9 @@ export function AppSidebarProfile() {
                             >
                             <Avatar className="h-8 w-8 rounded-lg">
                                 <AvatarImage src={``} alt={user?.full_name} />
-                                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                <AvatarFallback className="text-background bg-foreground rounded-lg">
+                                    {user?.full_name.charAt(0)}
+                                </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium">{user?.full_name}</span>
@@ -60,7 +63,9 @@ export function AppSidebarProfile() {
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
                                     <AvatarImage src={""} alt={user?.full_name} />
-                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    <AvatarFallback className="text-background bg-foreground rounded-lg">
+                                        {user?.full_name.charAt(0)}
+                                    </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-medium">{user?.full_name}</span>
@@ -70,10 +75,12 @@ export function AppSidebarProfile() {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
-                            </DropdownMenuItem>
+                            <Link to="/app/account">
+                                <DropdownMenuItem>
+                                    <BadgeCheck />
+                                    Account
+                                </DropdownMenuItem>
+                            </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <ButtonLogout />
