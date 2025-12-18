@@ -166,7 +166,7 @@ def change_password_handler(request: Request, params: ChangePasswordRequest, pay
             raise DataNotFoundError("Profile not found")
 
         # Verify old password
-        if not verify_password(password=params.new_password, hashed_password=profile.password):
+        if not verify_password(password=params.old_password, hashed_password=profile.password):
             raise ValueError("Invalid old password")
 
         # Update user password
