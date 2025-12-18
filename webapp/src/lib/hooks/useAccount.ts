@@ -39,6 +39,52 @@ export const useAccount = () => {
 		});
 	};
 
+    // update profile
+    const updateProfile = async ({
+        fullName,
+    }: {
+        fullName: string;
+    }) => {
+        const response = await api.POST(
+            `${APIUrl}/account/update-profile`,
+            {
+                full_name: fullName,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
+    // change password
+    const changePassword = async ({
+        oldPassword,
+        newPassword,
+        confirmPassword,
+    }: {
+        oldPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }) => {
+        const response = await api.POST(
+            `${APIUrl}/account/change-password`,
+            {
+                old_password: oldPassword,
+                new_password: newPassword,
+                confirm_password: confirmPassword,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // refetch data profile
     const refetchProfile = () => {
         queryClient.invalidateQueries({
@@ -48,6 +94,8 @@ export const useAccount = () => {
 
     return {
         getProfile,
+        updateProfile,
+        changePassword,
         refetchProfile,
     };
 };
