@@ -11,6 +11,7 @@ import {
 
 import { Separator } from "@/components/ui/separator";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 import { AppSidebar } from "./sidebar";
 
@@ -46,6 +47,7 @@ export function AppLayout(props: { children: React.ReactNode }) {
                 <main className="p-4">
                     {props.children}
                 </main>
+                <Toaster />
             </SidebarInset>
         </SidebarProvider>
     );
