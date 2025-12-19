@@ -46,6 +46,26 @@ export const useAccount = () => {
 		});
 	};
 
+    // forgot password
+    const forgotPassword = async ({
+        email,
+    }: {
+        email: string;
+    }) => {
+        const response = await api.POST(
+            `${APIUrl}/auth/forgot-password`,
+            {
+                email,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // update profile
     const updateProfile = async ({
         fullName,
@@ -101,6 +121,7 @@ export const useAccount = () => {
 
     return {
         getProfile,
+        forgotPassword,
         updateProfile,
         changePassword,
         refetchProfile,

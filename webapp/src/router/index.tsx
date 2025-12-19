@@ -4,6 +4,7 @@ import { rootRoute, appRoute } from "./__root";
 
 // auth routes
 import { loginRoute } from "./auth/login";
+import { forgotPasswordRoute } from "./auth/forgot-password";
 
 // app routes
 import { appMainRoute } from "./app/main";
@@ -15,6 +16,7 @@ import { appAccountRoute } from "./app/account";
 const routeTree = rootRoute.addChildren([
     // auth
     loginRoute,
+    forgotPasswordRoute,
 
     // app
     appRoute.addChildren([

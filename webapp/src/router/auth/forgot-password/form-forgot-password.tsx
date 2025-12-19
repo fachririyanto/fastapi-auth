@@ -1,31 +1,29 @@
 import { useState, useCallback } from "react";
-import { Link } from "@tanstack/react-router";
-import { LoaderCircle, AlertCircle } from "lucide-react";
+import { LoaderCircle, AlertCircle, CheckCircle } from "lucide-react";
 
-import { useAuth } from "@/components/authenticator";
+import { useAccount } from "@/lib/hooks/useAccount";
 import { isEmail } from "@/lib/utils/validator";
 import { getErrorMessage } from "@/lib/utils/error";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
-interface FieldLogin {
+interface FieldForgotPassword {
     email: string;
-    password: string;
 }
 
-const initialFields: FieldLogin = {
+const initialFields: FieldForgotPassword = {
     email: "",
-    password: "",
 };
 
-export function FormLogin() {
-    const { signIn } = useAuth();
+export function FormForgotPassword() {
+    const { forgotPassword } = useAccount();
 
-    const [fields, setFields] = useState<FieldLogin>(initialFields);
+    const [fields, setFields] = useState<FieldForgotPassword>(initialFields);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,12 +35,15 @@ export function FormLogin() {
         }));
     }, []);
 
-    const doLogin = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    const resetPassword = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (isLoading) {
             return;
         }
+
+        setError(null);
+        setSuccess(null);
 
         if (fields.email.trim() === "") {
             setError("Email is required");
@@ -52,36 +53,36 @@ export function FormLogin() {
             return;
         }
 
-        if (fields.password.trim() === "") {
-            setError("Password is required");
-            return;
-        }
-
         setIsLoading(true);
-        setError(null);
 
         try {
-            await signIn(fields.email, fields.password);
+            await forgotPassword(fields);
 
-            // redirect to /app
-            window.location.href = "/app";
+            // show success message
+            setSuccess("Link sent, check your email");
         } catch (error) {
             console.error("Login error:", error);
             setError(getErrorMessage(error) || "An unexpected error occurred during login");
         } finally {
             setIsLoading(false);
+
+            // clear fields
+            setFields(initialFields);
         }
-    }, [fields, isLoading]);
+    }, [fields, initialFields, isLoading, isEmail, forgotPassword]);
 
     return (
-        <form onSubmit={doLogin}>
+        <form onSubmit={resetPassword}>
             {error && (
-                <Alert variant="destructive" className="mb-4">
+                <Alert variant="destructive" className="mb-4 border-red-100 bg-red-50">
                     <AlertCircle />
-                    <AlertTitle>Login Failed</AlertTitle>
-                    <AlertDescription>
-                        {error}
-                    </AlertDescription>
+                    <AlertTitle>{error}</AlertTitle>
+                </Alert>
+            )}
+            {success && (
+                <Alert className="mb-4 border-green-100 bg-green-50">
+                    <CheckCircle className="!text-green-600" />
+                    <AlertTitle className="text-green-700">{success}</AlertTitle>
                 </Alert>
             )}
             <FieldGroup>
@@ -100,34 +101,13 @@ export function FormLogin() {
                     />
                 </Field>
                 <Field>
-                    <div className="flex items-center">
-                        <FieldLabel htmlFor="inputPassword">Password</FieldLabel>
-                        <Link
-                            to="/forgot-password"
-                            className="ml-auto text-sm text-muted-foreground underline-offset-4 hover:underline"
-                            >
-                            Forgot your password?
-                        </Link>
-                    </div>
-                    <Input
-                        id="inputPassword"
-                        type="password"
-                        name="password"
-                        value={fields.password}
-                        className="h-10"
-                        onChange={handleInputChange}
-                        disabled={isLoading}
-                        required
-                    />
-                </Field>
-                <Field>
                     <Button
                         type="submit"
                         className="h-10"
                         disabled={isLoading}
                         >
                         {isLoading && <LoaderCircle className="animate-spin" />}
-                        Login
+                        Send Reset Link
                     </Button>
                 </Field>
             </FieldGroup>
