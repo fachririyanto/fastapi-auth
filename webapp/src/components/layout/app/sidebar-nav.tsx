@@ -35,6 +35,11 @@ export function AppSidebarNav() {
                     canAccessUser,
                 },
             }));
+        } else {
+            setStore(prev => ({
+                ...prev,
+                isLoadingMenuAccess: false,
+            }));
         }
     }, [roleAccess]);
 
