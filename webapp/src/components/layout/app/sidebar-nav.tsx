@@ -3,6 +3,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Home, ShieldUser, UserCheck } from "lucide-react";
 
 import { useAuth } from "@/components/authenticator";
+import { Capability } from "@/lib/types/capability";
 import { cn } from "@/lib/shadcn/utils";
 import { useAppStore } from "./store";
 
@@ -23,8 +24,8 @@ export function AppSidebarNav() {
 
     useEffect(() => {
         if (roleAccess.length > 0) {
-            const canAccessRole = roleAccess.find(access => access === "read_role") ? true : false;
-            const canAccessUser = roleAccess.find(access => access === "read_user") ? true : false;
+            const canAccessRole = roleAccess.find(access => access === Capability.readRole) ? true : false;
+            const canAccessUser = roleAccess.find(access => access === Capability.readUser) ? true : false;
 
             setStore(prev => ({
                 ...prev,

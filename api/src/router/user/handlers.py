@@ -11,7 +11,7 @@ from src.models.auth import AuthPayload
 from src.services.auth import encrypt_password
 from src.services.user import is_user_can
 from src.services.mail import Mail
-from src.repository import User
+from src.repository import User, Role
 from src.error import ForbiddenError, DataNotFoundError, ERROR_MESSAGES
 
 from src.constants.capabilities import (
@@ -53,10 +53,16 @@ def get_users_handler(
             User.user_id,
             User.full_name,
             User.email,
+            User.role,
+            Role.role_name,
             User.is_active,
             User.is_verified,
+            User.verified_at,
             User.created_at,
             User.updated_at,
+        ).join(
+            Role,
+            Role.role_id == User.role,
         )
 
         filters = [
@@ -77,9 +83,13 @@ def get_users_handler(
 
         users = [dict(
             user_id=user.user_id,
+            role_id=user.role,
+            role_name=user.role_name,
             full_name=user.full_name,
             email=user.email,
             is_active=user.is_active,
+            is_verified=user.is_verified,
+            verified_at=user.verified_at,
             created_at=user.created_at,
             updated_at=user.updated_at,
         ) for user in results]
