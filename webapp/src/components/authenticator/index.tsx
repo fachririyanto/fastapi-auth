@@ -14,7 +14,7 @@ export interface AuthenticatorProps {
 
 export function Authenticator({ children }: AuthenticatorProps) {
     const [user, setUser] = useState<Profile | null>(null);
-    const [roleAccess, setRoleAccess] = useState<string[]>([]);
+    const [roleAccess, setRoleAccess] = useState<string[] | null>(null);
     const [token, setToken] = useState<string>("");
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 

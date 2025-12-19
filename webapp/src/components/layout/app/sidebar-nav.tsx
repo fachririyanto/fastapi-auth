@@ -23,24 +23,25 @@ export function AppSidebarNav() {
     const { roleAccess } = useAuth();
 
     useEffect(() => {
-        if (roleAccess.length > 0) {
-            const canAccessRole = roleAccess.find(access => access === Capability.readRole) ? true : false;
-            const canAccessUser = roleAccess.find(access => access === Capability.readUser) ? true : false;
+        if (roleAccess) {
+            if (roleAccess.length > 0) {
+                const canAccessRole = roleAccess.find(access => access === Capability.readRole) ? true : false;
+                const canAccessUser = roleAccess.find(access => access === Capability.readUser) ? true : false;
 
-            setStore(prev => ({
-                ...prev,
-                isLoadingMenuAccess: false,
-                menuAccess: {
-                    ...prev.menuAccess,
-                    canAccessRole,
-                    canAccessUser,
-                },
-            }));
-        } else {
-            setStore(prev => ({
-                ...prev,
-                isLoadingMenuAccess: false,
-            }));
+                setStore(prev => ({
+                    ...prev,
+                    isLoadingMenuAccess: false,
+                    menuAccess: {
+                        ...prev.menuAccess,
+                        canAccessRole,
+                        canAccessUser,
+                    },
+                }));
+            } else {
+                setStore(prev => ({
+                    ...prev,isLoadingMenuAccess: false,
+                }));
+            }
         }
     }, [roleAccess]);
 
