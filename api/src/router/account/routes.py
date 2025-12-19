@@ -26,10 +26,16 @@ account_router = APIRouter(
 @account_router.get("/me")
 def route_get_profile(
         request: Request,
+        with_role_access: bool = False,
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
-    return get_profile_me_handler(request=request, payload=payload, session=session)
+    return get_profile_me_handler(
+        request=request,
+        with_role_access=with_role_access,
+        payload=payload,
+        session=session,
+    )
 
 @account_router.get("/role-access")
 def route_get_my_role_capabilities(

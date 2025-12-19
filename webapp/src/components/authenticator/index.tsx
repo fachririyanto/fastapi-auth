@@ -14,6 +14,7 @@ export interface AuthenticatorProps {
 
 export function Authenticator({ children }: AuthenticatorProps) {
     const [user, setUser] = useState<Profile | null>(null);
+    const [roleAccess, setRoleAccess] = useState<string[]>([]);
     const [token, setToken] = useState<string>("");
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
@@ -106,17 +107,25 @@ export function Authenticator({ children }: AuthenticatorProps) {
     const isAuthenticated = token ? true : false;
 
     // get profile data
-    const myProfile = getProfile({ autoload: isAuthenticated });
+    const myProfile = getProfile({
+        autoload: isAuthenticated,
+        withRoleAccess: true,
+    });
 
     useEffect(() => {
         if (myProfile.data) {
             setUser(myProfile.data.profile);
+
+            if (myProfile.data.role_access) {
+                setRoleAccess(myProfile.data.role_access);
+            }
         }
     }, [myProfile.data]);
 
     // setup context props
     const value: AuthContextType = {
         user,
+        roleAccess,
         token,
         isAuthLoading,
         isProfileLoading: myProfile.isLoading,

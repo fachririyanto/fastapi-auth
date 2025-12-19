@@ -6,6 +6,7 @@ import { useApi } from "./useApi";
 
 export interface GetProfileResponse {
     profile: Profile;
+    role_access?: string[];
 }
 
 export const useAccount = () => {
@@ -21,12 +22,18 @@ export const useAccount = () => {
     } = useConfigQuery();
 
     // get current user profile
-    const getProfile = ({ autoload = true }: { autoload: boolean; }) => {
+    const getProfile = ({
+        autoload = true,
+        withRoleAccess = false,
+    }: {
+        autoload?: boolean;
+        withRoleAccess?: boolean;
+    }) => {
 		return useQuery({
 			queryKey: ["get_profile"],
 			queryFn: async () => {
 				const response = await api.GET<GetProfileResponse>(
-					`${APIUrl}/account/me`
+					`${APIUrl}/account/me?with_role_access=${withRoleAccess}`
 				);
 
 				return response.data;

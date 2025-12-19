@@ -16,7 +16,12 @@ from .models import (
 )
 
 
-def get_profile_me_handler(request: Request, payload: AuthPayload, session: Session):
+def get_profile_me_handler(
+        request: Request,
+        with_role_access: bool,
+        payload: AuthPayload,
+        session: Session,
+    ):
     try:
         stmt = select(
             User,
@@ -37,6 +42,21 @@ def get_profile_me_handler(request: Request, payload: AuthPayload, session: Sess
 
         if not profile:
             raise DataNotFoundError("Profile is not found")
+
+        # Get role access if True
+        if with_role_access:
+            role_access = session.scalars(
+                select(
+                    RoleCapabilities.capability_id,
+                ).filter(
+                    RoleCapabilities.role_id == profile.role,
+                )
+            ).all()
+
+            return {
+                "profile": profile,
+                "role_access": role_access,
+            }
 
         return {
             "profile": profile,

@@ -4,6 +4,7 @@ import type { Profile } from "@/lib/types/account";
 
 export interface AuthContextType {
     user: Profile | null;
+    roleAccess: string[];
     token: string;
     isAuthLoading: boolean;
     isProfileLoading: boolean;

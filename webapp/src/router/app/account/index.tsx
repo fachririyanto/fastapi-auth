@@ -11,9 +11,10 @@ function Page() {
     const { setStore } = useAppStore();
 
     useEffect(() => {
-        setStore({
+        setStore(prev => ({
+            ...prev,
             pageTitle: "Account",
-        });
+        }));
     }, []);
 
     return (
