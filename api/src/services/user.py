@@ -15,9 +15,9 @@ def is_user_can(session: Session, user_id: int, capabilities: list[str]) -> bool
             RoleCapabilities.role_id == user[0],
         ).all()
 
-        # Check if all requested capabilities are present
+        # Check if the requested capabilities are present
         capability_ids = [cap[0] for cap in role_capabilities]
-        if not all(cap in capability_ids for cap in capabilities):
+        if not any(cap in capability_ids for cap in capabilities):
             return False
 
         return True
