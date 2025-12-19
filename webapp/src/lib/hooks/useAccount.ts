@@ -95,6 +95,35 @@ export const useAccount = () => {
         return response.data;
     };
 
+    // confirm account
+    const confirmAccount = async ({
+        email,
+        verifyCode,
+        password,
+        confirmPassword,
+    }: {
+        email: string;
+        verifyCode: string;
+        password: string;
+        confirmPassword: string;
+    }) => {
+        const response = await api.POST(
+            `${APIUrl}/auth/confirm-account`,
+            {
+                email,
+                code: verifyCode,
+                new_password: password,
+                confirm_password: confirmPassword,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // update profile
     const updateProfile = async ({
         fullName,
@@ -152,6 +181,7 @@ export const useAccount = () => {
         getProfile,
         forgotPassword,
         resetPassword,
+        confirmAccount,
         updateProfile,
         changePassword,
         refetchProfile,
