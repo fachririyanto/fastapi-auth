@@ -16,6 +16,7 @@ from src.constants.capabilities import (
     CREATE_ROLE,
     UPDATE_ROLE,
     DELETE_ROLE,
+    CREATE_USER,
 )
 
 from .models import (
@@ -38,7 +39,7 @@ def get_roles_handler(
         if not is_user_can(
                 session=session,
                 user_id=int(payload.user_id),
-                capabilities=[READ_ROLE],
+                capabilities=[READ_ROLE, CREATE_USER],
             ):
             raise ForbiddenError(ERROR_MESSAGES["forbidden"])
 
