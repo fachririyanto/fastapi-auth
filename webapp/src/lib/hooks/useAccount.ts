@@ -66,6 +66,35 @@ export const useAccount = () => {
         return response.data;
     };
 
+    // reset password
+    const resetPassword = async ({
+        email,
+        resetCode,
+        password,
+        confirmPassword,
+    }: {
+        email: string;
+        resetCode: string;
+        password: string;
+        confirmPassword: string;
+    }) => {
+        const response = await api.POST(
+            `${APIUrl}/auth/reset-password`,
+            {
+                email,
+                code: resetCode,
+                new_password: password,
+                confirm_password: confirmPassword,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // update profile
     const updateProfile = async ({
         fullName,
@@ -122,6 +151,7 @@ export const useAccount = () => {
     return {
         getProfile,
         forgotPassword,
+        resetPassword,
         updateProfile,
         changePassword,
         refetchProfile,
