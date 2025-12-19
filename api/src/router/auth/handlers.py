@@ -302,6 +302,10 @@ def reset_password_handler(request: Request, params: ResetPasswordRequest, sessi
         if not user.is_active:
             raise ValueError("User is not active")
 
+        # Verify if user is verified
+        if not user.is_verified:
+            raise ValueError("User is not verified")
+
         # Verify reset code
         if user.reset_code == "" or user.reset_code != params.code:
             raise ValueError("Invalid code")
