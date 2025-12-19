@@ -6,7 +6,7 @@ import { useApi } from "./useApi";
 
 export interface GetUsersResponse {
     users: User[];
-    total: number;
+    count: number;
 }
 
 export interface GetUserResponse {

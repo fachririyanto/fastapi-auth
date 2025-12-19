@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { createRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
 
 import { appRoute } from "@/router/__root";
 import { useAuth } from "@/components/authenticator";
@@ -9,7 +8,7 @@ import { Capability } from "@/lib/types/capability";
 import { useLocalStore } from "./store";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import { ButtonAddItem } from "./button-add-item";
 
 import { Items } from "./items";
 
@@ -47,7 +46,7 @@ function PageOutlet() {
     const { roleAccess } = useAuth();
 
     useEffect(() => {
-        if (roleAccess.length > 0) {
+        if (roleAccess && roleAccess.length > 0) {
             const canAddItem = roleAccess.find(access => access === Capability.createUser) ? true : false;
             const canEditItem = roleAccess.find(access => access === Capability.updateUser) ? true : false;
             const canDeleteItem = roleAccess.find(access => access === Capability.deleteUser) ? true : false;
@@ -76,10 +75,7 @@ function PageOutlet() {
                 </div>
                 {
                     localStore.capability.canAddItem && (
-                        <Button type="button">
-                            <Plus />
-                            New User
-                        </Button>
+                        <ButtonAddItem />
                     )
                 }
             </header>

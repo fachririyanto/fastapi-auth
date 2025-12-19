@@ -50,7 +50,7 @@ function ItemDetails() {
             setLocalStore(prev => ({
                 ...prev,
                 items: items.data.users,
-                count: items.data.total,
+                count: items.data.count,
                 isFetching: items.isLoading,
             }));
         }
