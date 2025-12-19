@@ -8,7 +8,7 @@ import { getErrorMessage } from "@/lib/utils/error";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 interface FieldLogin {
@@ -44,6 +44,8 @@ export function FormLogin() {
             return;
         }
 
+        setError(null);
+
         if (fields.email.trim() === "") {
             setError("Email is required");
             return;
@@ -58,7 +60,6 @@ export function FormLogin() {
         }
 
         setIsLoading(true);
-        setError(null);
 
         try {
             await signIn(fields.email, fields.password);
@@ -75,15 +76,14 @@ export function FormLogin() {
 
     return (
         <form onSubmit={doLogin}>
-            {error && (
-                <Alert variant="destructive" className="mb-4">
-                    <AlertCircle />
-                    <AlertTitle>Login Failed</AlertTitle>
-                    <AlertDescription>
-                        {error}
-                    </AlertDescription>
-                </Alert>
-            )}
+            {
+                error && (
+                    <Alert variant="destructive" className="mb-4 border-red-100 bg-red-50">
+                        <AlertCircle />
+                        <AlertDescription className="leading-snug">{error}</AlertDescription>
+                    </Alert>
+                )
+            }
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="inputEmail">Email</FieldLabel>
