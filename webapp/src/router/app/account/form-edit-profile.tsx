@@ -8,7 +8,7 @@ import { getErrorMessage } from "@/lib/utils/error";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function FormEditProfile() {
     const { user, updateUser, isProfileLoading } = useAuth();
@@ -63,18 +63,24 @@ export function FormEditProfile() {
 
     return (
         <form onSubmit={saveProfile}>
-            {error && (
-                <Alert variant="destructive" className="mb-4 border-red-100 bg-red-50">
-                    <AlertCircle />
-                    <AlertTitle>{error}</AlertTitle>
-                </Alert>
-            )}
-            {success && (
-                <Alert className="mb-4 border-green-100 bg-green-50">
-                    <CheckCircle className="!text-green-600" />
-                    <AlertTitle className="text-green-700">{success}</AlertTitle>
-                </Alert>
-            )}
+            {
+                error && (
+                    <Alert variant="destructive" className="mb-4 border-red-100 bg-red-50">
+                        <AlertCircle />
+                        <AlertDescription className="leading-snug">{error}</AlertDescription>
+                    </Alert>
+                )
+            }
+            {
+                success && (
+                    <Alert className="mb-4 border-green-100 bg-green-50">
+                        <CheckCircle className="!text-green-600" />
+                        <AlertDescription className="text-green-700 leading-snug">
+                            {success}
+                        </AlertDescription>
+                    </Alert>
+                )
+            }
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="inputFullName" className="font-normal">Full Name</FieldLabel>
