@@ -99,7 +99,7 @@ def get_users_handler(
 
         return {
             "users": users,
-            "total": total_count,
+            "count": total_count,
         }
     except ForbiddenError as e:
         raise HTTPException(
