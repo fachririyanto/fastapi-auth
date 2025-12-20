@@ -50,7 +50,7 @@ def is_superadmin(role_id: int) -> bool:
 def register_capabilities(capabilities):
     """Register new capabilities"""
     global app_role_capabilities
-    app_role_capabilities = app_role_capabilities | capabilities
+    app_role_capabilities.append(capabilities)
 
 
 def get_all_role_capabilities():
