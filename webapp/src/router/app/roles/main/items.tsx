@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useRole } from "@/lib/hooks/useRole";
 import { useLocalStore } from "./store";
@@ -13,22 +13,49 @@ import {
 } from "@/components/ui/table";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { CustomPagination } from "@/components/custom/pagination";
 
 import { ButtonActions } from "./button-actions";
 
 export function Items() {
+    const { localStore, setLocalStore } = useLocalStore();
+    const [totalPage, setTotalPage] = useState<number>(0);
+
+    useEffect(() => {
+        setTotalPage(
+            Math.ceil(localStore.count / localStore.filter.limit)
+        );
+    }, [localStore.count, localStore.filter]);
+
     return (
-        <div className="overflow-hidden border rounded-lg">
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-muted hover:bg-muted">
-                        <TableHead>Role Name</TableHead>
-                        <TableHead className="w-[180px]">Created At</TableHead>
-                        <TableHead className="w-px">&nbsp;</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <ItemDetails />
-            </Table>
+        <div className="grid gap-4">
+            <div className="overflow-hidden border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-muted hover:bg-muted">
+                            <TableHead>Role Name</TableHead>
+                            <TableHead className="w-[180px]">Created At</TableHead>
+                            <TableHead className="w-px">&nbsp;</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <ItemDetails />
+                </Table>
+            </div>
+            <CustomPagination
+                currentPage={localStore.filter.page}
+                totalPage={totalPage}
+                pageRange={1}
+                className="justify-end"
+                onClickPage={(page) => {
+                    setLocalStore(prev => ({
+                        ...prev,
+                        filter: {
+                            ...prev.filter,
+                            page,
+                        },
+                    }));
+                }}
+            />
         </div>
     );
 }
@@ -39,7 +66,7 @@ function ItemDetails() {
 
     // load items
     const { getRoles } = useRole();
-    const items = getRoles();
+    const items = getRoles(localStore.filter);
 
     useEffect(() => {
         if (items.data) {

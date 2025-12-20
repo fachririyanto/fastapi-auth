@@ -24,7 +24,7 @@ const localStoreAtom = atom<LocalStore>({
     isFetching: true,
     filter: {
         search: "",
-        page: -1,
+        page: 1,
         limit: 10,
     },
     capability: {

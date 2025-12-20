@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BadgeCheck } from "lucide-react";
 
 import { useUser } from "@/lib/hooks/useUser";
@@ -15,27 +15,54 @@ import {
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { CustomPagination } from "@/components/custom/pagination";
 
 import { ButtonChangeStatus } from "./button-change-status";
 import { ButtonActions } from "./button-actions";
 
 export function Items() {
+    const { localStore, setLocalStore } = useLocalStore();
+    const [totalPage, setTotalPage] = useState<number>(0);
+
+    useEffect(() => {
+        setTotalPage(
+            Math.ceil(localStore.count / localStore.filter.limit)
+        );
+    }, [localStore.count, localStore.filter]);
+
     return (
-        <div className="overflow-hidden border rounded-lg">
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-muted hover:bg-muted">
-                        <TableHead>Full Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Verified At</TableHead>
-                        <TableHead>Created At</TableHead>
-                        <TableHead className="w-px">&nbsp;</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <ItemDetails />
-            </Table>
+        <div className="grid gap-4">
+            <div className="overflow-hidden border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-muted hover:bg-muted">
+                            <TableHead>Full Name</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Role</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Verified At</TableHead>
+                            <TableHead>Created At</TableHead>
+                            <TableHead className="w-px">&nbsp;</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <ItemDetails />
+                </Table>
+            </div>
+            <CustomPagination
+                currentPage={localStore.filter.page}
+                totalPage={totalPage}
+                pageRange={1}
+                className="justify-end"
+                onClickPage={(page) => {
+                    setLocalStore(prev => ({
+                        ...prev,
+                        filter: {
+                            ...prev.filter,
+                            page,
+                        },
+                    }));
+                }}
+            />
         </div>
     );
 }
@@ -46,7 +73,7 @@ function ItemDetails() {
 
     // load items
     const { getUsers } = useUser();
-    const items = getUsers();
+    const items = getUsers(localStore.filter);
 
     useEffect(() => {
         if (items.data) {
