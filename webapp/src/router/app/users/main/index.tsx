@@ -10,6 +10,7 @@ import { useLocalStore } from "./store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ButtonAddItem } from "./button-add-item";
 
+import { FormSearchItem } from "./form-search-item";
 import { Items } from "./items";
 
 function Page() {
@@ -79,6 +80,9 @@ function PageOutlet() {
                     )
                 }
             </header>
+            <div className="flex mb-4">
+                <FormSearchItem />
+            </div>
             <Items />
         </section>
     );
