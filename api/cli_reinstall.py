@@ -21,7 +21,7 @@ def reinstall_app():
 
         if module_name:
             # Reinstall selected module
-            import_module(f"modules.{module_name}._cli_reinstall")
+            import_module(f"modules.{module_name}.cli_reinstall")
 
             # Print reinstalled message
             print(f"Module {module_name} reinstalled")
@@ -35,7 +35,7 @@ def reinstall_app():
 
             # Reinstall all registered module
             for module in registered_modules:
-                import_module(f"modules.{module}._cli_reinstall")
+                import_module(f"modules.{module}.cli_reinstall")
 
             # Print reinstalled message
             print("Modules are reinstalled")

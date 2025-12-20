@@ -21,7 +21,7 @@ def uninstall_app():
 
         if module_name:
             # Uninstall selected module
-            import_module(f"modules.{module_name}._cli_uninstall")
+            import_module(f"modules.{module_name}.cli_uninstall")
 
             # Print uninstalled message
             print(f"Module {module_name} uninstalled")
@@ -31,7 +31,7 @@ def uninstall_app():
 
             # Uninstall all registered module
             for module in registered_modules:
-                import_module(f"modules.{module}._cli_uninstall")
+                import_module(f"modules.{module}.cli_uninstall")
 
             # Print uninstalled message
             print("Modules are uninstalled")

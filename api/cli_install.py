@@ -21,7 +21,7 @@ def install_app():
 
         if module_name:
             # Install selected module
-            import_module(f"modules.{module_name}._cli_install")
+            import_module(f"modules.{module_name}.cli_install")
 
             # Print installed message
             print(f"Module {module_name} installed")
@@ -36,7 +36,7 @@ def install_app():
 
             # Install all registered module
             for module in registered_modules:
-                import_module(f"modules.{module}._cli_install")
+                import_module(f"modules.{module}.cli_install")
 
             # Print installed message
             print("Modules are installed")
