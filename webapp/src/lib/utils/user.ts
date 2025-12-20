@@ -1,3 +1,7 @@
+export const superAdminID = () => {
+    return 1;
+};
+
 export const isSuperAdmin = (userId: number): boolean => {
-    return 1 === userId;
+    return superAdminID() === userId;
 };

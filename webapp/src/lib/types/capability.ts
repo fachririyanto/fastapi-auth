@@ -11,3 +11,14 @@ export const Capability = {
     updateUser: "update_user",
     deleteUser: "delete_user",
 } as const;
+
+export interface Module {
+    module_id: string;
+    module_name: string;
+    capabilities: Capability[];
+}
+
+export interface Capability {
+    id: string;
+    name: string;
+}

@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { LoaderCircle, AlertCircle } from "lucide-react";
 
-import { useUser } from "@/lib/hooks/useUser";
-import type { User } from "@/lib/types/user";
+import { useRole } from "@/lib/hooks/useRole";
+import type { Role } from "@/lib/types/role";
 import { getErrorMessage } from "@/lib/utils/error";
 
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,16 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 
 interface FormDeleteItemProps {
-    item: User;
+    item: Role;
     closeDialog?: () => void;
 }
 
 export function FormDeleteItem({ item, closeDialog }: FormDeleteItemProps) {
-    const { deleteUser, refetchUsers } = useUser();
+    const { deleteRole, refetchRoles } = useRole();
     const [isFormLoading, setIsFormLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
 
-    const deleteSelectedUser = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    const deleteSelectedRole = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (isFormLoading) {
@@ -30,26 +30,26 @@ export function FormDeleteItem({ item, closeDialog }: FormDeleteItemProps) {
         setIsFormLoading(true);
 
         try {
-            await deleteUser(item.user_id);
+            await deleteRole(item.role_id);
 
-            // refetch users
-            refetchUsers();
+            // refetch roles
+            refetchRoles();
 
             // show success message
-            toast.success("User has been deleted");
+            toast.success("Role has been deleted");
 
             // close dialog
             closeDialog?.();
         } catch (error) {
-            console.error("Delete user error:", error);
-            setError(getErrorMessage(error) || "An unexpected error occurred during delete user");
+            console.error("Delete role error:", error);
+            setError(getErrorMessage(error) || "An unexpected error occurred during delete role");
         } finally {
             setIsFormLoading(false);
         }
-    }, [item.user_id, isFormLoading, deleteUser, refetchUsers]);
+    }, [item.role_id, isFormLoading, deleteRole, refetchRoles]);
 
     return (
-        <form onSubmit={deleteSelectedUser}>
+        <form onSubmit={deleteSelectedRole}>
             {
                 error && (
                     <Alert variant="destructive" className="mb-4 border-red-100 bg-red-50">
@@ -79,7 +79,7 @@ export function FormDeleteItem({ item, closeDialog }: FormDeleteItemProps) {
                     disabled={isFormLoading}
                     >
                     {isFormLoading && <LoaderCircle className="animate-spin" />}
-                    Delete User
+                    Delete Role
                 </Button>
             </DialogFooter>
         </form>
