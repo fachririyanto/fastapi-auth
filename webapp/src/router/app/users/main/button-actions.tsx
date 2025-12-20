@@ -6,6 +6,7 @@ import { isSuperAdmin } from "@/lib/utils/user";
 import type { User } from "@/lib/types/user";
 
 import { Button } from "@/components/ui/button";
+import { useLocalStore } from "./store";
 
 import {
     Dialog,
@@ -32,6 +33,7 @@ interface ButtonActionsProps {
 
 export function ButtonActions({ item }: ButtonActionsProps) {
     const { user } = useAuth();
+    const { localStore } = useLocalStore();
 
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -42,7 +44,11 @@ export function ButtonActions({ item }: ButtonActionsProps) {
         setIsDialogOpen(true);
     };
 
-    if (isSuperAdmin(item.user_id) || user?.user_id === item.user_id) {
+    if (
+        isSuperAdmin(item.user_id)
+        || user?.user_id === item.user_id
+        || (!localStore.capability.canEditItem && !localStore.capability.canDeleteItem)
+    ) {
         return <span className="block h-8"></span>;
     }
 
@@ -60,15 +66,27 @@ export function ButtonActions({ item }: ButtonActionsProps) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[180px]">
-                    <DropdownMenuItem onClick={() => handleClickMenu("menu_change_role")}>
-                        <Pencil />
-                        Change Role
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="hover:!bg-red-50" onClick={() => handleClickMenu("menu_delete_user")}>
-                        <Trash className="text-red-700" />
-                        <span className="text-red-700">Delete User</span>
-                    </DropdownMenuItem>
+                    {
+                        localStore.capability.canEditItem && (
+                            <DropdownMenuItem onClick={() => handleClickMenu("menu_change_role")}>
+                                <Pencil />
+                                Change Role
+                            </DropdownMenuItem>
+                        )
+                    }
+                    {
+                        (localStore.capability.canEditItem || localStore.capability.canDeleteItem) && (
+                            <DropdownMenuSeparator />
+                        )
+                    }
+                    {
+                        localStore.capability.canDeleteItem && (
+                            <DropdownMenuItem className="hover:!bg-red-50" onClick={() => handleClickMenu("menu_delete_user")}>
+                                <Trash className="text-red-700" />
+                                <span className="text-red-700">Delete User</span>
+                            </DropdownMenuItem>
+                        )
+                    }
                 </DropdownMenuContent>
             </DropdownMenu>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
