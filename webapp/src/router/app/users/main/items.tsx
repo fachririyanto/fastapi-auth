@@ -16,19 +16,22 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 
+import { ButtonChangeStatus } from "./button-change-status";
+import { ButtonActions } from "./button-actions";
+
 export function Items() {
     return (
         <div className="overflow-hidden border rounded-lg">
             <Table>
                 <TableHeader>
-                    <TableRow className="bg-muted">
+                    <TableRow className="bg-muted hover:bg-muted">
                         <TableHead>Full Name</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Verified At</TableHead>
                         <TableHead>Created At</TableHead>
-                        <TableHead>&nbsp;</TableHead>
+                        <TableHead className="w-px">&nbsp;</TableHead>
                     </TableRow>
                 </TableHeader>
                 <ItemDetails />
@@ -101,32 +104,41 @@ function ItemDetails() {
                             {item.full_name}
                         </TableCell>
                         <TableCell>
-                            {item.email}
+                            <span className="inline-flex gap-2">
+                                {item.email}
+                                {
+                                    item.is_verified ? (
+                                        <Badge className="bg-blue-500">
+                                            <BadgeCheck />
+                                            Verified
+                                        </Badge>
+                                    ) : (
+                                        <Badge variant="destructive">Not verified</Badge>
+                                    )
+                                }
+                            </span>
                         </TableCell>
                         <TableCell>
                             {item.role_name}
                         </TableCell>
                         <TableCell>
-                            {
-                                item.is_active ? (
-                                    <Badge className="bg-green-600">Active</Badge>
-                                ) : (
-                                    <Badge variant="destructive">Inactive</Badge>
-                                )
-                            }
+                            <span className="inline-flex gap-2 items-center">
+                                <ButtonChangeStatus item={item} />
+                                {
+                                    item.is_active ? (
+                                        <Badge className="bg-green-600">Active</Badge>
+                                    ) : (
+                                        <Badge variant="destructive">Inactive</Badge>
+                                    )
+                                }
+                            </span>
                         </TableCell>
                         <TableCell>
                             {
                                 item.is_verified ? (
-                                    <span className="inline-flex gap-2">
-                                        {new Date(item.verified_at).toLocaleDateString()}
-                                        <Badge className="bg-blue-500">
-                                            <BadgeCheck />
-                                            Verified
-                                        </Badge>
-                                    </span>
+                                    new Date(item.verified_at).toLocaleDateString()
                                 ) : (
-                                    <Badge variant="destructive">Not verified</Badge>
+                                    <>&mdash;</>
                                 )
                             }
                         </TableCell>
@@ -134,7 +146,7 @@ function ItemDetails() {
                             {new Date(item.created_at).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                            &nbsp;
+                            <ButtonActions item={item} />
                         </TableCell>
                     </TableRow>
                 ))

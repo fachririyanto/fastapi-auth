@@ -120,6 +120,29 @@ export const useUser = () => {
         return response.data;
     };
 
+    // change role
+    const changeRole = async ({
+        userId,
+        roleId,
+    }: {
+        userId: number;
+        roleId: number;
+    }) => {
+        const response = await api.PATCH(
+            `${APIUrl}/user/change-role`,
+            {
+                user_id: userId,
+                role: roleId,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // delete user
     const deleteUser = async (userId: number) => {
         const response = await api.DELETE(
@@ -157,6 +180,7 @@ export const useUser = () => {
         getUser,
         createUser,
         changeStatus,
+        changeRole,
         deleteUser,
         refetchUsers,
         refetchUser,
