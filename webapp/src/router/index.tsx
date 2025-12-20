@@ -10,9 +10,11 @@ import { confirmAccountRoute } from "./auth/confirm-account";
 
 // app routes
 import { appMainRoute } from "./app/main";
-import { appRolesRoute } from "./app/roles/main";
-import { appUsersRoute } from "./app/users/main";
 import { appAccountRoute } from "./app/account";
+import { appRolesRoute } from "./app/roles/main";
+import { appNewRoleRoute } from "./app/roles/new";
+import { appEditRoleRoute } from "./app/roles/edit";
+import { appUsersRoute } from "./app/users/main";
 
 // register routes
 const routeTree = rootRoute.addChildren([
@@ -25,9 +27,11 @@ const routeTree = rootRoute.addChildren([
     // app
     appRoute.addChildren([
         appMainRoute,
-        appRolesRoute,
-        appUsersRoute,
         appAccountRoute,
+        appRolesRoute,
+        appNewRoleRoute,
+        appEditRoleRoute,
+        appUsersRoute,
     ]),
 ]);
 

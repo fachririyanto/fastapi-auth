@@ -49,12 +49,14 @@ def route_get_roles(
 def route_get_role(
         request: Request,
         role_id: int,
+        with_role_access: bool = False,
         payload: AuthPayload = Depends(authorize_token),
         session: Session = Depends(db_session),
     ):
     return get_role_handler(
         request=request,
         role_id=role_id,
+        with_role_access=with_role_access,
         payload=payload,
         session=session,
     )

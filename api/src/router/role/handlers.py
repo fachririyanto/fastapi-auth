@@ -103,6 +103,7 @@ def get_roles_handler(
 def get_role_handler(
         request: Request,
         role_id: int,
+        with_role_access: bool,
         payload: AuthPayload,
         session: Session,
     ):
@@ -139,6 +140,21 @@ def get_role_handler(
 
         if not role:
             raise DataNotFoundError("Role not found")
+
+        # Get role access if True
+        if with_role_access:
+            role_access = session.scalars(
+                select(
+                    RoleCapabilities.capability_id,
+                ).filter(
+                    RoleCapabilities.role_id == role.role_id,
+                )
+            ).all()
+
+            return {
+                "role": role,
+                "capabilities": role_access,
+            }
 
         return {
             "role": role,
@@ -185,7 +201,7 @@ def get_all_role_capabilities_handler(
             raise ForbiddenError(ERROR_MESSAGES["forbidden"])
 
         return {
-            "capabilities": get_all_role_capabilities(),
+            "modules": get_all_role_capabilities(),
         }
     except Exception as e:
         log_error.add_error(

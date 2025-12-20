@@ -11,11 +11,12 @@ export interface GetRolesResponse {
 }
 
 export interface GetRoleResponse {
-    role: Role[];
+    role: Role;
+    capabilities?: string[];
 }
 
 export interface GetRoleCapabilitiesResponse {
-    capabilities: Module[];
+    modules: Module[];
 }
 
 export interface GetRoleCapabilityResponse {
@@ -63,12 +64,12 @@ export const useRole = () => {
     };
 
     // get role detail
-    const getRole = (roleId: number) => {
+    const getRole = (roleId: number, withCapabilities: boolean = false) => {
         return useQuery({
             queryKey: ["get_role", roleId],
             queryFn: async () => {
                 const response = await api.GET<GetRoleResponse>(
-                    `${APIUrl}/role/detail/${roleId}`
+                    `${APIUrl}/role/detail/${roleId}?with_role_access=${withCapabilities}`
                 );
 
                 return response.data;
@@ -130,10 +131,8 @@ export const useRole = () => {
         const response = await api.POST(
             `${APIUrl}/role/create`,
             {
-                data: {
-                    role_name: roleName,
-                    capabilities,
-                },
+                role_name: roleName,
+                capabilities,
             }
         );
 
@@ -157,11 +156,9 @@ export const useRole = () => {
         const response = await api.PATCH(
             `${APIUrl}/role/update`,
             {
-                data: {
-                    role_id: roleId,
-                    role_name: roleName,
-                    capabilities,
-                },
+                role_id: roleId,
+                role_name: roleName,
+                capabilities,
             }
         );
 
