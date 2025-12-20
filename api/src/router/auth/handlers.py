@@ -13,7 +13,7 @@ from src.models.auth import AuthPayload
 from src.repository import User, AuthToken
 from src.services.auth import verify_password, generate_token, encrypt_password
 from src.services.mail import Mail
-from src.error import UnauthorizedError, DataNotFoundError
+from src.error import UnauthorizedError, ForbiddenError, DataNotFoundError
 
 from .models import (
     LoginRequest,
@@ -132,7 +132,7 @@ def refresh_token_handler(request: Request, params: RefreshTokenRequest, session
         ).first()
 
         if not refresh_token:
-            raise UnauthorizedError("Invalid refresh token")
+            raise ForbiddenError("Invalid refresh token")
 
         # Generate new tokens
         tokens = generate_token(user_id=str(refresh_token.user_id))
@@ -169,9 +169,9 @@ def refresh_token_handler(request: Request, params: RefreshTokenRequest, session
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
-    except UnauthorizedError as e:
+    except ForbiddenError as e:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail=str(e),
         )
     except Exception as e:
