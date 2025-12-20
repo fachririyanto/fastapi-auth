@@ -9,7 +9,7 @@ from lib.log_error import log_error
 from src.config import app_config
 from src.models.auth import AuthPayload
 from src.services.auth import encrypt_password
-from src.services.user import is_user_can
+from src.services.user import is_user_can, is_superadmin
 from src.services.mail import Mail
 from src.repository import User, Role
 from src.error import ForbiddenError, DataNotFoundError, ERROR_MESSAGES
@@ -24,6 +24,7 @@ from src.constants.capabilities import (
 from .models import (
     CreateUserRequest,
     ChangeUserStatusRequest,
+    ChangeUserRoleRequest,
     DeleteUserRequest,
 )
 
@@ -375,6 +376,81 @@ def change_user_status_handler(
         )
 
 
+def change_user_role_handler(
+        request: Request,
+        params: ChangeUserRoleRequest,
+        payload: AuthPayload,
+        session: Session,
+    ):
+    try:
+        # Verify if user has permission to update user
+        if not is_user_can(
+                session=session,
+                user_id=int(payload.user_id),
+                capabilities=[UPDATE_USER],
+            ):
+            raise ForbiddenError(ERROR_MESSAGES["forbidden"])
+
+        # Validate request params
+        if not params.user_id:
+            raise ValueError("User ID is required")
+
+        if params.role is None:
+            raise ValueError("Role is required")
+
+        # Check if user exists
+        user = session.query(
+            User,
+        ).filter(
+            User.user_id == params.user_id,
+            User.is_deleted == False,
+        ).first()
+
+        if not user:
+            raise DataNotFoundError("User not found")
+
+        # Update user status
+        user.role = params.role
+        user.updated_at = func.now()
+
+        # Commit transactions
+        session.commit()
+
+        return {
+            "data": {
+                "user_id": params.user_id,
+                "status": "user_role_changed",
+            },
+        }
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except ForbiddenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except DataNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except Exception as e:
+        session.rollback()
+
+        log_error.add_error(
+            message="An error occurred during change user role",
+            exc_info=e,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during change user role" if app_config.ENV == "production" else str(e),
+        )
+
+
 def delete_user_handler(
         request: Request,
         params: DeleteUserRequest,
@@ -393,6 +469,13 @@ def delete_user_handler(
         # Validate request params
         if not params.user_id:
             raise ValueError("User ID is required")
+
+        # Verify if deleted user is current user or superadmin
+        if is_superadmin(params.user_id):
+            raise ForbiddenError("Forbidden access to delete superadmin")
+
+        if int(payload.user_id) == params.user_id:
+            raise ForbiddenError("Forbidden access to delete my self")
 
         # Check if user exists
         user = session.query(

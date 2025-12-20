@@ -8,6 +8,7 @@ from src.models.auth import AuthPayload
 from .models import (
     CreateUserRequest,
     ChangeUserStatusRequest,
+    ChangeUserRoleRequest,
     DeleteUserRequest,
 )
 
@@ -16,6 +17,7 @@ from .handlers import (
     get_user_handler,
     create_user_handler,
     change_user_status_handler,
+    change_user_role_handler,
     delete_user_handler,
 )
 
@@ -79,6 +81,20 @@ def route_change_user_status(
         session: Session = Depends(db_session),
     ):
     return change_user_status_handler(
+        request=request,
+        params=params,
+        payload=payload,
+        session=session,
+    )
+
+@user_router.patch("/change-role")
+def route_change_user_role(
+        request: Request,
+        params: ChangeUserRoleRequest,
+        payload: AuthPayload = Depends(authorize_token),
+        session: Session = Depends(db_session),
+    ):
+    return change_user_role_handler(
         request=request,
         params=params,
         payload=payload,

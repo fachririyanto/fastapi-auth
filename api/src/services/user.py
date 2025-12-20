@@ -3,6 +3,14 @@ from sqlalchemy.orm import Session
 from src.repository import User, RoleCapabilities
 
 
+def superadmin_id() -> int:
+    return 1
+
+
+def is_superadmin(user_id: int) -> bool:
+    return superadmin_id() == user_id
+
+
 def is_user_can(session: Session, user_id: int, capabilities: list[str]) -> bool:
     try:
         # Get user's role

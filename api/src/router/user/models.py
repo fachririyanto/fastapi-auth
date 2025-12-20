@@ -12,5 +12,10 @@ class ChangeUserStatusRequest(BaseModel):
     is_active: bool = True
 
 
+class ChangeUserRoleRequest(BaseModel):
+    user_id: int = 0
+    role: int = 0
+
+
 class DeleteUserRequest(BaseModel):
     user_id: int = 0
