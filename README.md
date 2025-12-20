@@ -17,8 +17,13 @@ Authentication using FastAPI (Python) - in active development.
   * [X] Change User Role
   * [X] Change User Active Status
   * [X] Delete User
-* [ ] Module Role
+* [X] Module Role
   * [X] List Roles
-  * [ ] Create Role
-  * [ ] Update Role
+  * [X] Create Role
+  * [X] Update Role
   * [X] Delete Role
+* [ ] Module Sandbox (Custom CRUD)
+  * [ ] List Sandbox
+  * [ ] Create Sandbox
+  * [ ] Update Sandbox
+  * [ ] Delete Sandbox
