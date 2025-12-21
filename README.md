@@ -22,8 +22,8 @@ Authentication using FastAPI (Python) - in active development.
   * [X] Create Role
   * [X] Update Role
   * [X] Delete Role
-* [ ] Module Sandbox (Custom CRUD)
-  * [ ] List Sandbox
-  * [ ] Create Sandbox
-  * [ ] Update Sandbox
-  * [ ] Delete Sandbox
+* [X] Module Sandbox (Custom CRUD)
+  * [X] List Sandbox
+  * [X] Create Sandbox
+  * [X] Update Sandbox
+  * [X] Delete Sandbox
