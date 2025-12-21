@@ -1,5 +1,5 @@
 # FastAPI Auth
-Role based authentication using FastAPI (Python).
+Role-based authentication using FastAPI (Python). Designed for an internal application where user registration is not allowed; users can join only by invitation from superadmin or admin roles.
 
 ### Tech Stack
 - Database: PostgreSQL
