@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useConfig } from "@/lib/hooks/useConfig";
 import { useApi } from "@/lib/hooks/useApi";
@@ -16,7 +16,6 @@ export function Authenticator({ children }: AuthenticatorProps) {
     const [user, setUser] = useState<Profile | null>(null);
     const [roleAccess, setRoleAccess] = useState<string[] | null>(null);
     const [token, setToken] = useState<string>("");
-    const [refreshToken, setRefreshToken] = useState<string>("");
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
     const { APIUrl } = useConfig();
@@ -55,10 +54,10 @@ export function Authenticator({ children }: AuthenticatorProps) {
     };
 
     // handle user signout
-    const signOut = async () => {
+    const signOut = useCallback(async () => {
         try {
             const response = await api.POST(`${APIUrl}/auth/logout`, {
-                refresh_token: refreshToken,
+                refresh_token: getRefreshToken(),
             });
 
             if (response.status !== 200) {
@@ -72,7 +71,7 @@ export function Authenticator({ children }: AuthenticatorProps) {
             console.error("Error while signing out: ", error);
             throw error;
         }
-    };
+    }, [getRefreshToken]);
 
     // handle user signout for all devices
     const signOutAll = async () => {
@@ -103,13 +102,6 @@ export function Authenticator({ children }: AuthenticatorProps) {
             setToken(accessToken);
         }
 
-        // get refresh token
-        const tokenRefresh = getRefreshToken();
-
-        if (tokenRefresh) {
-            setRefreshToken(tokenRefresh);
-        }
-
         setIsAuthLoading(false);
     }, []);
 
@@ -138,7 +130,6 @@ export function Authenticator({ children }: AuthenticatorProps) {
         token,
         isAuthLoading,
         isProfileLoading: myProfile.isLoading,
-        setRefreshToken,
         updateUser: (val: Profile) => setUser(val),
         signIn,
         signOut,
