@@ -10,6 +10,12 @@ export const Capability = {
     createUser: "create_user",
     updateUser: "update_user",
     deleteUser: "delete_user",
+
+    // sandbox
+    readSandbox: "read_sandbox",
+    createSandbox: "create_sandbox",
+    updateSandbox: "update_sandbox",
+    deleteSandbox: "delete_sandbox",
 } as const;
 
 export interface Module {

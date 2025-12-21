@@ -16,6 +16,9 @@ import { appNewRoleRoute } from "./app/roles/new";
 import { appEditRoleRoute } from "./app/roles/edit";
 import { appUsersRoute } from "./app/users/main";
 
+// custom app routes
+import { appSandboxRoute } from "./app/sandbox/main";
+
 // register routes
 const routeTree = rootRoute.addChildren([
     // auth
@@ -32,6 +35,7 @@ const routeTree = rootRoute.addChildren([
         appNewRoleRoute,
         appEditRoleRoute,
         appUsersRoute,
+        appSandboxRoute,
     ]),
 ]);
 

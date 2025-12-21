@@ -34,11 +34,11 @@ const initialFields: FieldAddItem = {
     role: "",
 };
 
-interface FieldAddItemProps {
+interface FormAddItemProps {
     closeDialog?: () => void;
 }
 
-export function FormAddItem({ closeDialog }: FieldAddItemProps) {
+export function FormAddItem({ closeDialog }: FormAddItemProps) {
     const { createUser, refetchUsers } = useUser();
 
     const [fields, setFields] = useState<FieldAddItem>(initialFields);

@@ -364,7 +364,7 @@ def update_role_handler(
         session: Session,
     ):
     try:
-        # Verify if user has permission to create roles
+        # Verify if user has permission to update roles
         if not is_user_can(
                 session=session,
                 user_id=int(payload.user_id),

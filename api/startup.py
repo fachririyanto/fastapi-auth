@@ -2,7 +2,9 @@ from importlib import import_module
 
 
 # Register modules
-registered_modules = []
+registered_modules = [
+    "sandbox",
+]
 
 def load_modules():
     global registered_modules

@@ -39,6 +39,10 @@ export function CustomPagination({
 
     const pages = getPageNumbers();
 
+    if (totalPage <= 0) {
+        return null;
+    }
+
     return (
         <Pagination className={cn(className)}>
             <PaginationContent>

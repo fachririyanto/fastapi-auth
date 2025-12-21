@@ -25,12 +25,12 @@ interface FieldChangeRole {
     role: string;
 }
 
-interface FieldChangeRoleProps {
+interface FormChangeRoleProps {
     item: User;
     closeDialog?: () => void;
 }
 
-export function FormChangeRole({ item, closeDialog }: FieldChangeRoleProps) {
+export function FormChangeRole({ item, closeDialog }: FormChangeRoleProps) {
     const { changeRole, refetchUsers } = useUser();
 
     const [fields, setFields] = useState<FieldChangeRole>({ role: item.role_id.toString() });

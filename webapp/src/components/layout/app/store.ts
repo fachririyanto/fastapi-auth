@@ -3,6 +3,7 @@ import { atom, useAtom } from "jotai";
 interface MenuAccess {
     canAccessRole: boolean;
     canAccessUser: boolean;
+    canAccessSandbox: boolean;
 }
 
 interface AppStore {
@@ -19,6 +20,7 @@ const appStore = atom<AppStore>({
     menuAccess: {
         canAccessRole: false,
         canAccessUser: false,
+        canAccessSandbox: false,
     },
 });
 

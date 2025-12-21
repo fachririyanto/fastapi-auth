@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, ShieldUser, UserCheck } from "lucide-react";
+import { Home, ShieldUser, UserCheck, Database } from "lucide-react";
 
 import { useAuth } from "@/components/authenticator";
 import { Capability } from "@/lib/types/capability";
@@ -28,6 +28,9 @@ export function AppSidebarNav() {
                 const canAccessRole = roleAccess.find(access => access === Capability.readRole) ? true : false;
                 const canAccessUser = roleAccess.find(access => access === Capability.readUser) ? true : false;
 
+                // custom modules
+                const canAccessSandbox = roleAccess.find(access => access === Capability.readSandbox) ? true : false;
+
                 setStore(prev => ({
                     ...prev,
                     isLoadingMenuAccess: false,
@@ -35,6 +38,7 @@ export function AppSidebarNav() {
                         ...prev.menuAccess,
                         canAccessRole,
                         canAccessUser,
+                        canAccessSandbox,
                     },
                 }));
             } else {
@@ -66,6 +70,18 @@ export function AppSidebarNav() {
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
+                    {
+                        menuAccess.canAccessSandbox && (
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <Link to="/app/sandbox" className={cn((pathname === "/app/sandbox" || pathname.startsWith("/app/sandbox")) && "bg-muted")}>
+                                        <Database className="size-4" />
+                                        <span>Sandbox</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        )
+                    }
                 </SidebarMenu>
             </SidebarGroup>
             {
@@ -77,7 +93,7 @@ export function AppSidebarNav() {
                                 menuAccess.canAccessRole && (
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild>
-                                            <Link to="/app/roles" className={cn(pathname === "/app/roles" && "bg-muted")}>
+                                            <Link to="/app/roles" className={cn((pathname === "/app/roles" || pathname.startsWith("/app/roles")) && "bg-muted")}>
                                                 <ShieldUser className="size-4" />
                                                 <span>Roles</span>
                                             </Link>
@@ -89,7 +105,7 @@ export function AppSidebarNav() {
                                 menuAccess.canAccessUser && (
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild>
-                                            <Link to="/app/users" className={cn(pathname === "/app/users" && "bg-muted")}>
+                                            <Link to="/app/users" className={cn((pathname === "/app/users" || pathname.startsWith("/app/users")) && "bg-muted")}>
                                                 <UserCheck className="size-4" />
                                                 <span>Users</span>
                                             </Link>
