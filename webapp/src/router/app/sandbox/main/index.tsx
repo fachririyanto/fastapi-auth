@@ -48,9 +48,9 @@ function PageOutlet() {
 
     useEffect(() => {
         if (roleAccess && roleAccess.length > 0) {
-            const canAddItem = roleAccess.find(access => access === Capability.createUser) ? true : false;
-            const canEditItem = roleAccess.find(access => access === Capability.updateUser) ? true : false;
-            const canDeleteItem = roleAccess.find(access => access === Capability.deleteUser) ? true : false;
+            const canAddItem = roleAccess.find(access => access === Capability.createSandbox) ? true : false;
+            const canEditItem = roleAccess.find(access => access === Capability.updateSandbox) ? true : false;
+            const canDeleteItem = roleAccess.find(access => access === Capability.deleteSandbox) ? true : false;
 
             setLocalStore(prev => ({
                 ...prev,
