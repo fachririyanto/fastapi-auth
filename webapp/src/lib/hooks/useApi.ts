@@ -10,6 +10,7 @@ import {
     destroySession,
 } from "@/lib/utils/auth";
 
+import { useAuth } from "@/components/authenticator";
 import { useConfig } from "./useConfig";
 
 /**
@@ -73,6 +74,10 @@ api.interceptors.response.use(async (response) => {
 
                 // update token
                 originalRequest.headers["Authorization"] = `Bearer ${data.tokens.access_token}`;
+
+                // update refresh token
+                const { setRefreshToken } = useAuth();
+                setRefreshToken(data.tokens.refresh_token);
 
                 return api(originalRequest);
             } catch (err) {

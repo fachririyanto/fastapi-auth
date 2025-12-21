@@ -16,6 +16,7 @@ export function Authenticator({ children }: AuthenticatorProps) {
     const [user, setUser] = useState<Profile | null>(null);
     const [roleAccess, setRoleAccess] = useState<string[] | null>(null);
     const [token, setToken] = useState<string>("");
+    const [refreshToken, setRefreshToken] = useState<string>("");
     const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
     const { APIUrl } = useConfig();
@@ -57,7 +58,7 @@ export function Authenticator({ children }: AuthenticatorProps) {
     const signOut = async () => {
         try {
             const response = await api.POST(`${APIUrl}/auth/logout`, {
-                refresh_token: getRefreshToken(),
+                refresh_token: refreshToken,
             });
 
             if (response.status !== 200) {
@@ -95,10 +96,18 @@ export function Authenticator({ children }: AuthenticatorProps) {
     useEffect(() => {
         setIsAuthLoading(true);
 
+        // get access token
         const accessToken = getToken();
 
         if (accessToken) {
             setToken(accessToken);
+        }
+
+        // get refresh token
+        const tokenRefresh = getRefreshToken();
+
+        if (tokenRefresh) {
+            setRefreshToken(tokenRefresh);
         }
 
         setIsAuthLoading(false);
@@ -129,6 +138,7 @@ export function Authenticator({ children }: AuthenticatorProps) {
         token,
         isAuthLoading,
         isProfileLoading: myProfile.isLoading,
+        setRefreshToken,
         updateUser: (val: Profile) => setUser(val),
         signIn,
         signOut,
