@@ -6,13 +6,14 @@ from sqlalchemy.sql import func
 from lib.log_error import log_error
 from src.config import app_config
 from src.models.auth import AuthPayload
-from src.repository import User, RoleCapabilities
+from src.repository import User, RoleCapabilities, AuthToken
 from src.services.auth import verify_password, encrypt_password
 from src.error import DataNotFoundError
 
 from .models import (
     UpdateProfileRequest,
     ChangePasswordRequest,
+    RevokeTokenRequest,
 )
 
 
@@ -78,7 +79,11 @@ def get_profile_me_handler(
         )
 
 
-def get_my_role_capabilities_handler(request: Request, payload: AuthPayload, session: Session):
+def get_my_role_capabilities_handler(
+        request: Request,
+        payload: AuthPayload,
+        session: Session,
+    ):
     try:
         capabilities = session.scalars(
             select(
@@ -107,7 +112,12 @@ def get_my_role_capabilities_handler(request: Request, payload: AuthPayload, ses
         )
 
 
-def update_profile_handler(request: Request, params: UpdateProfileRequest, payload: AuthPayload, session: Session):
+def update_profile_handler(
+        request: Request,
+        params: UpdateProfileRequest,
+        payload: AuthPayload,
+        session: Session,
+    ):
     try:
         # Validate request params
         if not params.full_name:
@@ -160,7 +170,12 @@ def update_profile_handler(request: Request, params: UpdateProfileRequest, paylo
         )
 
 
-def change_password_handler(request: Request, params: ChangePasswordRequest, payload: AuthPayload, session: Session):
+def change_password_handler(
+        request: Request,
+        params: ChangePasswordRequest,
+        payload: AuthPayload,
+        session: Session,
+    ):
     try:
         # Validate request params
         if not params.old_password:
@@ -222,4 +237,99 @@ def change_password_handler(request: Request, params: ChangePasswordRequest, pay
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred during change password" if app_config.ENV == "production" else str(e),
+        )
+
+
+def get_user_tokens_handler(
+        request: Request,
+        payload: AuthPayload,
+        session: Session,
+    ):
+    try:
+        # Get user tokens
+        results = session.query(
+            AuthToken.auth_id,
+            AuthToken.created_at,
+            AuthToken.ip_address,
+            AuthToken.user_agent,
+        ).filter(
+            AuthToken.user_id == int(payload.user_id),
+        ).all()
+
+        tokens = [dict(
+            auth_id=token.auth_id,
+            created_at=token.created_at,
+            ip_address=token.ip_address,
+            user_agent=token.user_agent,
+        ) for token in results]
+
+        return {
+            "tokens": tokens,
+        }
+    except Exception as e:
+        log_error.add_error(
+            message="An error occurred during get user tokens",
+            exc_info=e,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during get user tokens" if app_config.ENV == "production" else str(e),
+        )
+
+
+def revoke_token_handler(
+        request: Request,
+        params: RevokeTokenRequest,
+        payload: AuthPayload,
+        session: Session,
+    ):
+    try:
+        # Validate request params
+        if not params.token_id:
+            raise ValueError("Token ID is required")
+
+        # Check if token is exists
+        token = session.query(
+            AuthToken,
+        ).filter(
+            AuthToken.auth_id == params.token_id,
+            AuthToken.user_id == int(payload.user_id),
+        ).first()
+
+        if not token:
+            raise DataNotFoundError("Token not found")
+
+        # Delete token
+        session.delete(token)
+
+        # Commit transactions
+        session.commit()
+
+        return {
+            "data": {
+                "status": "token_deleted",
+            },
+        }
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except DataNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+    except Exception as e:
+        session.rollback()
+
+        log_error.add_error(
+            message="An error occurred during revoke token",
+            exc_info=e,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during revoke token" if app_config.ENV == "production" else str(e),
         )

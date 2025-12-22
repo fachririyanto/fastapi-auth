@@ -1,12 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { Profile } from "@/lib/types/account";
+import type { Profile, UserToken } from "@/lib/types/account";
 import { useConfig, useConfigQuery } from "./useConfig";
 import { useApi } from "./useApi";
 
 export interface GetProfileResponse {
     profile: Profile;
     role_access?: string[];
+}
+
+export interface GetUserTokensResponse {
+    tokens: UserToken[];
 }
 
 export const useAccount = () => {
@@ -170,10 +174,56 @@ export const useAccount = () => {
         return response.data;
     };
 
+    // get user tokens
+    const getUserTokens = ({
+        autoload = true,
+    }: {
+        autoload?: boolean;
+    }) => {
+		return useQuery({
+			queryKey: ["get_user_tokens"],
+			queryFn: async () => {
+				const response = await api.GET<GetUserTokensResponse>(
+					`${APIUrl}/account/tokens`
+				);
+
+				return response.data;
+			},
+			enabled: autoload,
+			retry,
+			staleTime,
+			refetchOnReconnect,
+			refetchOnWindowFocus,
+		});
+	};
+
+    // revoke user token
+    const revokeToken = async (tokenId: number) => {
+        const response = await api.POST(
+            `${APIUrl}/account/revoke-token`,
+            {
+                token_id: tokenId,
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // refetch data profile
     const refetchProfile = () => {
         queryClient.invalidateQueries({
             queryKey: ["get_profile"],
+        });
+    };
+
+    // refetch user tokens
+    const refetchUserTokens = () => {
+        queryClient.invalidateQueries({
+            queryKey: ["get_user_tokens"],
         });
     };
 
@@ -184,6 +234,9 @@ export const useAccount = () => {
         confirmAccount,
         updateProfile,
         changePassword,
+        getUserTokens,
+        revokeToken,
         refetchProfile,
+        refetchUserTokens,
     };
 };

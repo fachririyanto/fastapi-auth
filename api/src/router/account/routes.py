@@ -8,6 +8,7 @@ from src.models.auth import AuthPayload
 from .models import (
     UpdateProfileRequest,
     ChangePasswordRequest,
+    RevokeTokenRequest,
 )
 
 from .handlers import (
@@ -15,6 +16,8 @@ from .handlers import (
     get_my_role_capabilities_handler,
     update_profile_handler,
     change_password_handler,
+    get_user_tokens_handler,
+    revoke_token_handler,
 )
 
 
@@ -62,3 +65,20 @@ def route_change_password(
         session: Session = Depends(db_session),
     ):
     return change_password_handler(request=request, params=params, payload=payload, session=session)
+
+@account_router.get("/tokens")
+def route_get_user_tokens(
+        request: Request,
+        payload: AuthPayload = Depends(authorize_token),
+        session: Session = Depends(db_session),
+    ):
+    return get_user_tokens_handler(request=request, payload=payload, session=session)
+
+@account_router.post("/revoke-token")
+def route_revoke_token(
+        request: Request,
+        params: RevokeTokenRequest,
+        payload: AuthPayload = Depends(authorize_token),
+        session: Session = Depends(db_session),
+    ):
+    return revoke_token_handler(request=request, params=params, payload=payload, session=session)
