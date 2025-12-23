@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Role } from "@/lib/types/role";
 import type { Module } from "@/lib/types/capability";
-import { useConfig, useConfigQuery } from "./useConfig";
+import { APIUrl, TanstackQuery } from "@/lib/config";
 import { useApi } from "./useApi";
 
 export interface GetRolesResponse {
@@ -26,7 +26,6 @@ export interface GetRoleCapabilityResponse {
 
 export const useRole = () => {
     const api = useApi();
-    const { APIUrl } = useConfig();
     const queryClient = useQueryClient();
 
     const {
@@ -34,7 +33,7 @@ export const useRole = () => {
         staleTime,
         refetchOnReconnect,
         refetchOnWindowFocus,
-    } = useConfigQuery();
+    } = TanstackQuery;
 
     // get list of roles
     const getRoles = ({

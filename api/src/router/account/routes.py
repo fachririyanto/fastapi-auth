@@ -9,6 +9,7 @@ from .models import (
     UpdateProfileRequest,
     ChangePasswordRequest,
     RevokeTokenRequest,
+    RevokeOtherSessionsRequest,
 )
 
 from .handlers import (
@@ -18,6 +19,7 @@ from .handlers import (
     change_password_handler,
     get_user_tokens_handler,
     revoke_token_handler,
+    revoke_other_sessions_handler,
 )
 
 
@@ -82,3 +84,12 @@ def route_revoke_token(
         session: Session = Depends(db_session),
     ):
     return revoke_token_handler(request=request, params=params, payload=payload, session=session)
+
+@account_router.post("/revoke-other-sessions")
+def route_revoke_other_sessions(
+        request: Request,
+        params: RevokeOtherSessionsRequest,
+        payload: AuthPayload = Depends(authorize_token),
+        session: Session = Depends(db_session),
+    ):
+    return revoke_other_sessions_handler(request=request, params=params, payload=payload, session=session)

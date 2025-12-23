@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { User } from "@/lib/types/user";
-import { useConfig, useConfigQuery } from "./useConfig";
+import { APIUrl, TanstackQuery } from "@/lib/config";
 import { useApi } from "./useApi";
 
 export interface GetUsersResponse {
@@ -15,7 +15,6 @@ export interface GetUserResponse {
 
 export const useUser = () => {
     const api = useApi();
-    const { APIUrl } = useConfig();
     const queryClient = useQueryClient();
 
     const {
@@ -23,7 +22,7 @@ export const useUser = () => {
         staleTime,
         refetchOnReconnect,
         refetchOnWindowFocus,
-    } = useConfigQuery();
+    } = TanstackQuery;
 
     // get list of users
     const getUsers = ({

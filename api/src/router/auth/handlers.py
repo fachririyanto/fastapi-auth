@@ -128,11 +128,16 @@ def refresh_token_handler(request: Request, params: RefreshTokenRequest, session
             AuthToken,
         ).filter(
             AuthToken.refresh_token == params.refresh_token,
-            AuthToken.expires_at > func.now(),
         ).first()
 
         if not refresh_token:
             raise ForbiddenError("Invalid refresh token")
+
+        if refresh_token.expires_at <= datetime.datetime.now(datetime.timezone.utc):
+            # Delete the expired refresh token
+            session.delete(refresh_token)
+            session.commit()
+            raise ForbiddenError("Refresh token is expired")
 
         # Generate new tokens
         tokens = generate_token(user_id=str(refresh_token.user_id))

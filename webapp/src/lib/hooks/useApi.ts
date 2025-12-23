@@ -10,23 +10,7 @@ import {
     destroySession,
 } from "@/lib/utils/auth";
 
-import { useConfig } from "./useConfig";
-
-/**
- * Request refresh token.
- */
-const requestRefreshToken = async () => {
-    const { APIUrl } = useConfig();
-    const response = await api.post(`${APIUrl}/auth/refresh-token`, {
-        refresh_token: getRefreshToken(),
-    });
-
-    if (response.status !== 200) {
-        throw new Error("Failed to refresh token");
-    }
-
-    return response.data;
-};
+import { APIUrl } from "@/lib/config";
 
 /**
  * Create axios api object.
@@ -38,6 +22,43 @@ const api = axios.create({
     maxBodyLength: Infinity,
 });
 
+const refreshApi = axios.create({
+    baseURL: APIUrl,
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
+});
+
+/**
+ * Request refresh token.
+ */
+const requestRefreshToken = async () => {
+    const response = await refreshApi.post(`/auth/refresh-token`, {
+        refresh_token: getRefreshToken(),
+    });
+
+    if (response.status !== 200) {
+        throw new Error("Failed to refresh token");
+    }
+
+    return response.data;
+};
+
+/**
+ * Add refresh token queue.
+ */
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach(prom => {
+        error ? prom.reject(error) : prom.resolve(token);
+    });
+    failedQueue = [];
+};
+
+/**
+ * Handle api request.
+ */
 api.interceptors.request.use(async (config) => {
     const token = getToken();
 
@@ -50,6 +71,9 @@ api.interceptors.request.use(async (config) => {
     return Promise.reject(error);
 });
 
+/**
+ * Handle api response.
+ */
 api.interceptors.response.use(async (response) => {
     return response;
 }, async (error) => {
@@ -57,7 +81,20 @@ api.interceptors.response.use(async (response) => {
 
     // handle 401 errors (Unauthorized)
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
+        if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+                failedQueue.push({
+                    resolve: (token: string) => {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(api(originalRequest));
+                    },
+                    reject,
+                });
+            });
+        }
+
         originalRequest._retry = true;
+        isRefreshing = true;
 
         const refreshToken = getRefreshToken();
 
@@ -75,13 +112,16 @@ api.interceptors.response.use(async (response) => {
                 originalRequest.headers["Authorization"] = `Bearer ${data.tokens.access_token}`;
 
                 // update refresh token if logout action
-                if (originalRequest.url.includes("/auth/logout")) {
-                    console.log(originalRequest);
-
+                if (
+                    originalRequest.url.includes("/auth/logout")
+                    || originalRequest.url.includes("/account/revoke-other-sessions")
+                ) {
                     originalRequest.data = JSON.stringify({
                         refresh_token: data.tokens.refresh_token,
                     });
                 }
+
+                processQueue(null, data.tokens.access_token);
 
                 return api(originalRequest);
             } catch (err) {

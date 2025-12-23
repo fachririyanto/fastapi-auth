@@ -13,3 +13,7 @@ class ChangePasswordRequest(BaseModel):
 
 class RevokeTokenRequest(BaseModel):
     token_id: int = 0
+
+
+class RevokeOtherSessionsRequest(BaseModel):
+    refresh_token: str = ""

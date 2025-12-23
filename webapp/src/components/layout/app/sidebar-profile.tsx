@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, ChevronsUpDown, LogOut, LoaderCircle } from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, Monitor, LogOut, LoaderCircle } from "lucide-react";
 
 import { useAuth } from "@/components/authenticator";
 
@@ -79,6 +79,12 @@ export function AppSidebarProfile() {
                                 <DropdownMenuItem>
                                     <BadgeCheck />
                                     Account
+                                </DropdownMenuItem>
+                            </Link>
+                            <Link to="/app/account/sessions">
+                                <DropdownMenuItem>
+                                    <Monitor />
+                                    Sessions
                                 </DropdownMenuItem>
                             </Link>
                         </DropdownMenuGroup>

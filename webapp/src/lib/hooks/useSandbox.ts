@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Sandbox } from "@/lib/types/sandbox";
-import { useConfig, useConfigQuery } from "./useConfig";
+import { APIUrl, TanstackQuery } from "@/lib/config";
 import { useApi } from "./useApi";
 
 export interface GetSandboxesResponse {
@@ -15,7 +15,6 @@ export interface GetSandboxResponse {
 
 export const useSandbox = () => {
     const api = useApi();
-    const { APIUrl } = useConfig();
     const queryClient = useQueryClient();
 
     const {
@@ -23,7 +22,7 @@ export const useSandbox = () => {
         staleTime,
         refetchOnReconnect,
         refetchOnWindowFocus,
-    } = useConfigQuery();
+    } = TanstackQuery;
 
     // get list of sandbox
     const getSandboxes = ({

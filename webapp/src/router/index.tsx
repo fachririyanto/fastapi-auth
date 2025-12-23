@@ -11,6 +11,7 @@ import { confirmAccountRoute } from "./auth/confirm-account";
 // app routes
 import { appMainRoute } from "./app/main";
 import { appAccountRoute } from "./app/account";
+import { appAccountSessionsRoute } from "./app/account/sessions";
 import { appRolesRoute } from "./app/roles/main";
 import { appNewRoleRoute } from "./app/roles/new";
 import { appEditRoleRoute } from "./app/roles/edit";
@@ -31,6 +32,7 @@ const routeTree = rootRoute.addChildren([
     appRoute.addChildren([
         appMainRoute,
         appAccountRoute,
+        appAccountSessionsRoute,
         appRolesRoute,
         appNewRoleRoute,
         appEditRoleRoute,

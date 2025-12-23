@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { getRefreshToken } from "@/lib/utils/auth";
 import type { Profile, UserToken } from "@/lib/types/account";
-import { useConfig, useConfigQuery } from "./useConfig";
+import { APIUrl, TanstackQuery } from "@/lib/config";
 import { useApi } from "./useApi";
 
 export interface GetProfileResponse {
@@ -15,7 +16,6 @@ export interface GetUserTokensResponse {
 
 export const useAccount = () => {
     const api = useApi();
-    const { APIUrl } = useConfig();
 	const queryClient = useQueryClient();
 
     const {
@@ -23,7 +23,7 @@ export const useAccount = () => {
         staleTime,
         refetchOnReconnect,
         refetchOnWindowFocus,
-    } = useConfigQuery();
+    } = TanstackQuery;
 
     // get current user profile
     const getProfile = ({
@@ -179,7 +179,7 @@ export const useAccount = () => {
         autoload = true,
     }: {
         autoload?: boolean;
-    }) => {
+    } = {}) => {
 		return useQuery({
 			queryKey: ["get_user_tokens"],
 			queryFn: async () => {
@@ -213,6 +213,22 @@ export const useAccount = () => {
         return response.data;
     };
 
+    // revoke other sessions
+    const revokeOtherSessions = async () => {
+        const response = await api.POST(
+            `${APIUrl}/account/revoke-other-sessions`,
+            {
+                refresh_token: getRefreshToken(),
+            }
+        );
+
+        if (response.status !== 200) {
+            throw new Error(response.statusText);
+        }
+
+        return response.data;
+    };
+
     // refetch data profile
     const refetchProfile = () => {
         queryClient.invalidateQueries({
@@ -236,6 +252,7 @@ export const useAccount = () => {
         changePassword,
         getUserTokens,
         revokeToken,
+        revokeOtherSessions,
         refetchProfile,
         refetchUserTokens,
     };
