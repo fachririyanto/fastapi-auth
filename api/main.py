@@ -9,8 +9,9 @@ from src.router import load_routers
 # Setup API
 app = FastAPI(
     version="0.0.1",
-    docs_url="/docs" if app_config.ENV != "production" else None,
-    redoc_url="/redoc" if app_config.ENV != "production" else None,
+    docs_url=None if app_config.ENV == "production" else "/docs",
+    redoc_url=None if app_config.ENV == "production" else "/redoc",
+    openapi_url=None if app_config.ENV == "production" else "/openapi.json",
 )
 
 @app.get("/health", tags=["Health"])
