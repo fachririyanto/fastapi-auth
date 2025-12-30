@@ -16,6 +16,7 @@ Role-based authentication using FastAPI (Python). Designed for an internal appli
 * [X] Module Account
   * [X] Update Profile
   * [X] Change Password
+  * [X] Revoke Other Sessions
 * [X] Module User
   * [X] List Users
   * [X] Create User
